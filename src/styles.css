@@ -171,3 +171,52 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .siman-list a { grid-template-columns: minmax(2.5rem, max-content) 1fr; }
   .siman-list small { display: none; }
 }
+
+/* Home page */
+.home-mode { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main"; }
+.home-mode .content { max-width: 60rem; width: 100%; margin: 0 auto; }
+.hero { margin: 1rem 0 2rem; }
+.hero h1 { font-family: 'Frank Ruhl Libre', serif; font-size: 2.6rem; margin: 0 0 .5rem; }
+.hero p { color: var(--muted); font-size: 1.1rem; line-height: 1.7; margin: 0 0 1.25rem; }
+.resume {
+  display: inline-flex; align-items: center; gap: .75rem;
+  padding: .75rem 1rem; border-radius: 12px; text-decoration: none;
+  background: var(--accent); color: var(--surface);
+}
+.resume span { display: flex; flex-direction: column; }
+.resume small { opacity: .85; font-size: .8rem; }
+
+.home-books { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: .75rem; margin-bottom: 2.5rem; }
+.book-card {
+  display: flex; flex-direction: column; gap: .25rem;
+  padding: 1.1rem 1.25rem; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface); text-decoration: none;
+}
+.book-card strong { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; }
+.book-card span { color: var(--muted); }
+.book-card:hover { border-color: var(--accent); }
+
+.importance h2 { font-family: 'Frank Ruhl Libre', serif; font-size: 1.6rem; margin: 0 0 1rem; }
+.importance figure {
+  margin: 0 0 1rem; padding: 1.1rem 1.4rem;
+  border-inline-start: 4px solid var(--accent); border-radius: 8px; background: var(--surface);
+}
+.importance blockquote { margin: 0; font-family: 'Frank Ruhl Libre', serif; font-size: 1.25rem; line-height: 1.8; }
+.importance .meaning { margin: .4rem 0 0; color: var(--muted); }
+.importance figcaption { margin-top: .5rem; color: var(--accent); font-size: .9rem; font-weight: 500; }
+
+/* Bookmark */
+.bookmark-link { display: inline-flex; padding: .35rem; color: var(--accent); border-radius: 8px; }
+.bookmark-link:hover { background: var(--accent-soft); }
+.mark {
+  align-self: flex-start; flex: none; padding: .3rem; margin-top: .15rem;
+  border: 0; border-radius: 6px; background: none; color: var(--muted); opacity: .35;
+}
+.seifim li:hover .mark, .mark:focus-visible { opacity: 1; }
+.mark:hover { color: var(--accent); background: var(--accent-soft); }
+.mark.on { opacity: 1; color: var(--accent); }
+
+@media (max-width: 760px) {
+  .hero h1 { font-size: 2rem; }
+  .mark { opacity: .6; }
+}
