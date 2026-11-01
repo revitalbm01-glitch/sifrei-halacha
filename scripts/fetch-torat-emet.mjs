@@ -19,6 +19,18 @@ const toText = s => decodeEntities(s.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]
 // "ח'" / "קכ\"ח" -> "ח" / "קכח"
 const cleanLabel = s => s.replace(/['"״׳]/g, '').trim();
 
+// Siman headings come as "סימן ח' - title", but also "סימנים שח, שיא - title",
+// "סימן יד סעיף ג' - title" and "המשך סימן קו - title". Subheadings without a
+// siman reference get an empty label.
+function parseSimanHeading(full) {
+  const m = full.match(/^(?:המשך\s+)?(?:סימנים|סימן)\s+(.+?)(?:\s*-\s*(.*))?$/);
+  if (!m) return { label: '', title: full };
+  const ref = m[1].includes(' ') || m[1].includes(',')
+    ? m[1].replace(/'(?=[\s,]|$)/g, '').trim() // keep abbreviations like בש"ע, drop trailing geresh
+    : cleanLabel(m[1]);
+  return { label: ref, title: m[2]?.trim() || full };
+}
+
 // Heading text is the first underlined/bold run in the chunk
 function heading(chunk) {
   const m = chunk.match(/<u>([\s\S]*?)<\/u>/i) ?? chunk.match(/<B>([\s\S]*?)<\/B>/i);
@@ -55,9 +67,8 @@ for (let i = 1; i < pieces.length; i += 2) {
     const intro = afterHeading(chunk);
     if (intro) { newSiman('', topic.title); siman.seifim.push({ label: '', text: intro }); }
   } else if (kind === '~') {
-    const full = heading(chunk);
-    const m = full.match(/^סימן\s+([^\s-]+)\s*-\s*(.*)$/);
-    newSiman(m ? cleanLabel(m[1]) : '', m ? m[2].trim() : full);
+    const { label, title } = parseSimanHeading(heading(chunk));
+    newSiman(label, title);
     const intro = afterHeading(chunk);
     if (intro) siman.seifim.push({ label: '', text: intro });
   } else {
