@@ -1,3 +1,4 @@
+import learningPhoto from './assets/learning.jpg';
 import { href } from './data.js';
 
 // Quoted from the original texts on Sefaria, without niqqud
@@ -21,6 +22,7 @@ export default function Home({ books, bookmark }) {
   return (
     <div className="home">
       <section className="hero">
+        <img src={learningPhoto} alt="שני בחורים צעירים לומדים יחד בספר ומחייכים" width="507" height="507" />
         <div className="hero-text">
           <h1>ספרי הלכה</h1>
           <p>לימוד הלכה לפי נושא, סימן וסעיף — ילקוט יוסף וקיצור שולחן ערוך.</p>
