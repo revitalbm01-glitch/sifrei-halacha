@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useBook } from './useBook.js';
-import { hebrewNumber, stripNiqqud } from './hebrew.js';
+import { hebrewNumber, spellingRegex, stripNiqqud } from './hebrew.js';
 
 const MAX_TEXT_HITS = 40;
 
@@ -29,20 +29,21 @@ export default function App() {
     seifim: s.seifim.map(stripNiqqud),
   })) ?? [], [book]);
 
-  const q = stripNiqqud(query.trim());
-  const titleHits = q ? searchIndex.filter(s => s.title.includes(q)).map(s => s.number) : null;
+  const q = query.trim();
+  const re = useMemo(() => spellingRegex(q), [q]);
+  const titleHits = re ? searchIndex.filter(s => re.test(s.title)).map(s => s.number) : null;
   const textHits = useMemo(() => {
-    if (q.length < 2) return [];
+    if (!re || stripNiqqud(q).length < 2) return [];
     const hits = [];
     for (const s of searchIndex) {
       s.seifim.forEach((text, i) => {
         if (hits.length >= MAX_TEXT_HITS) return;
-        const at = text.indexOf(q);
-        if (at >= 0) hits.push({ siman: s.number, seif: i + 1, snippet: snippet(text, at, q.length) });
+        const m = re.exec(text);
+        if (m) hits.push({ siman: s.number, seif: i + 1, snippet: snippet(text, m.index, m[0].length) });
       });
     }
     return hits;
-  }, [q, searchIndex]);
+  }, [q, re, searchIndex]);
 
   const siman = book?.simanim.find(s => s.number === selected.siman);
 
