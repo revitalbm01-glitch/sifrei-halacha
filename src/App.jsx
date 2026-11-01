@@ -17,7 +17,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(!readHash().siman);
 
   useEffect(() => {
-    const onHash = () => setSelected(readHash());
+    const onHash = () => { setSelected(readHash()); setMenuOpen(false); };
     addEventListener('hashchange', onHash);
     return () => removeEventListener('hashchange', onHash);
   }, []);
