@@ -1,13 +1,23 @@
 [
   {
-    "id": "sample",
-    "title": "ספר לדוגמה",
-    "author": "",
+    "id": "yalkut-yosef",
+    "title": "קיצור שולחן ערוך ילקוט יוסף",
+    "author": "הרב יצחק יוסף",
+    "source": {
+      "name": "תורת אמת",
+      "url": "https://toratemetfreeware.com/online/f_01355_all.html",
+      "license": "CC BY-NC-SA 2.5",
+      "rights": "כל הזכויות שמורות למו\"ר הרב יצחק יוסף שליט\"א"
+    }
+  },
+  {
+    "id": "kitzur-shulchan-arukh",
+    "title": "קיצור שולחן ערוך",
+    "author": "רבי שלמה גאנצפריד",
     "source": {
       "name": "Sefaria",
-      "version": "Torat Emet 357",
-      "license": "Public Domain",
-      "url": "https://www.sefaria.org/Kitzur_Shulchan_Arukh"
+      "url": "https://www.sefaria.org/Kitzur_Shulchan_Arukh",
+      "license": "Public Domain"
     }
   }
 ]
