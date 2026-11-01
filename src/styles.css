@@ -175,7 +175,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* Home page */
 .home-mode { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "main"; }
 .home-mode .content { max-width: 60rem; width: 100%; margin: 0 auto; }
-.hero { margin: 1rem 0 2rem; }
+.hero {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 2rem; align-items: center;
+  margin: 1rem 0 2rem;
+}
+.hero img {
+  width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; display: block;
+  border-radius: 16px; box-shadow: 0 10px 30px rgba(40, 25, 10, .18);
+}
 .hero h1 { font-family: 'Frank Ruhl Libre', serif; font-size: 2.6rem; margin: 0 0 .5rem; }
 .hero p { color: var(--muted); font-size: 1.1rem; line-height: 1.7; margin: 0 0 1.25rem; }
 .resume {
@@ -217,6 +224,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .mark.on { opacity: 1; color: var(--accent); }
 
 @media (max-width: 760px) {
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .hero img { aspect-ratio: 4 / 3; }
   .hero h1 { font-size: 2rem; }
   .mark { opacity: .6; }
 }
