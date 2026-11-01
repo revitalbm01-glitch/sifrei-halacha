@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { href, readLocation, useJson } from './data.js';
+import {
+  HOME, href, isHome, loadBookmark, readLocation, saveBookmark, startLocation, useJson,
+} from './data.js';
 import { spellingRegex } from './hebrew.js';
+import Home, { BookmarkIcon } from './Home.jsx';
 
 export default function App() {
-  const [loc, setLoc] = useState(readLocation);
+  const [loc, setLoc] = useState(startLocation);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [bookmark, setBookmark] = useState(loadBookmark);
 
   useEffect(() => {
     const onHash = () => { setLoc(readLocation()); setMenuOpen(false); };
@@ -12,8 +16,11 @@ export default function App() {
     return () => removeEventListener('hashchange', onHash);
   }, []);
 
+  const updateBookmark = bm => { saveBookmark(bm); setBookmark(bm); };
+
   const books = useJson('books.json');
-  const book = books.data?.find(b => b.id === loc.book) ?? books.data?.[0];
+  const home = isHome(loc);
+  const book = home ? null : books.data?.find(b => b.id === loc.book) ?? books.data?.[0];
   const index = useJson(book ? `${book.id}/index.json` : null);
   const topicFile = useJson(book && loc.topic ? `${book.id}/topics/${loc.topic}.json` : null);
 
@@ -27,25 +34,47 @@ export default function App() {
   }, [loc, siman]);
 
   if (books.error) return <div className="status">לא ניתן לטעון את רשימת הספרים</div>;
-  if (!book) return <div className="status">טוען…</div>;
+  if (!books.data) return <div className="status">טוען…</div>;
+
+  const topbar = (
+    <header className="topbar">
+      {!home && (
+        <button className="menu-btn" onClick={() => setMenuOpen(o => !o)} aria-expanded={menuOpen}>
+          {menuOpen ? 'סגור' : 'נושאים'}
+        </button>
+      )}
+      <a className="brand" href={`#${HOME}`}>ספרי הלכה</a>
+      <nav className="book-tabs" aria-label="ספר">
+        {books.data.map(b => (
+          <a key={b.id} href={href({ book: b.id })} className={b.id === book?.id ? 'active' : ''}>
+            {shortTitle(b)}
+          </a>
+        ))}
+      </nav>
+      {bookmark && !home && (
+        <a className="bookmark-link" href={href(bookmark)} title={`לסימניה: ${bookmark.label}`} aria-label="לסימניה">
+          <BookmarkIcon filled />
+        </a>
+      )}
+    </header>
+  );
+
+  if (home) {
+    return (
+      <div className="layout home-mode">
+        {topbar}
+        <main className="content">
+          <Home books={books.data} bookmark={bookmark} />
+        </main>
+      </div>
+    );
+  }
 
   const at = rest => href({ book: book.id, ...rest });
 
   return (
     <div className="layout">
-      <header className="topbar">
-        <button className="menu-btn" onClick={() => setMenuOpen(o => !o)} aria-expanded={menuOpen}>
-          {menuOpen ? 'סגור' : 'נושאים'}
-        </button>
-        <a className="brand" href={at({})}>ספרי הלכה</a>
-        <nav className="book-tabs" aria-label="ספר">
-          {books.data.map(b => (
-            <a key={b.id} href={href({ book: b.id })} className={b.id === book.id ? 'active' : ''}>
-              {shortTitle(b)}
-            </a>
-          ))}
-        </nav>
-      </header>
+      {topbar}
 
       <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
         {index.data && <Toc book={book} index={index.data} loc={loc} at={at} />}
@@ -62,7 +91,23 @@ export default function App() {
         ) : !siman ? (
           <TopicView topic={topicFile.data} n={loc.topic} at={at} />
         ) : (
-          <SimanView topicData={topicFile.data} siman={siman} loc={loc} at={at} topics={topics} />
+          <SimanView
+            topicData={topicFile.data}
+            siman={siman}
+            loc={loc}
+            at={at}
+            topics={topics}
+            bookmark={bookmark?.book === book.id ? bookmark : null}
+            onBookmark={seif => {
+              const here = { book: book.id, topic: loc.topic, siman: loc.siman, seif };
+              const same = bookmark && ['book', 'topic', 'siman', 'seif'].every(k => bookmark[k] === here[k]);
+              const seifLabel = siman.seifim[seif - 1].label;
+              updateBookmark(same ? null : {
+                ...here,
+                label: `${shortTitle(book)} · ${topicFile.data.title} · ${simanName(siman)}${seifLabel ? ` סעיף ${seifLabel}` : ''}`,
+              });
+            }}
+          />
         )}
         <SourceNote book={book} />
       </main>
@@ -171,7 +216,8 @@ function TopicView({ topic, n, at }) {
   );
 }
 
-function SimanView({ topicData, siman, loc, at, topics }) {
+function SimanView({ topicData, siman, loc, at, topics, bookmark, onBookmark }) {
+  const marked = i => bookmark?.topic === loc.topic && bookmark.siman === loc.siman && bookmark.seif === i + 1;
   const prev = loc.siman > 1
     ? { topic: loc.topic, siman: loc.siman - 1 }
     : neighbourTopic(topics, loc.topic, -1);
@@ -203,6 +249,14 @@ function SimanView({ topicData, siman, loc, at, topics }) {
           <li key={i} id={`seif-${i + 1}`} className={loc.seif === i + 1 ? 'highlight' : ''}>
             <a className="seif-num" href={at({ topic: loc.topic, siman: loc.siman, seif: i + 1 })}>{s.label}</a>
             <p>{renderSeif(s.text)}</p>
+            <button
+              className={`mark ${marked(i) ? 'on' : ''}`}
+              onClick={() => onBookmark(i + 1)}
+              aria-pressed={marked(i)}
+              title={marked(i) ? 'הסרת הסימניה' : 'שמירת סימניה כאן'}
+            >
+              <BookmarkIcon filled={marked(i)} />
+            </button>
           </li>
         ))}
       </ol>

@@ -44,3 +44,35 @@ export function readLocation() {
 export function href({ book, topic, siman, seif }) {
   return '#' + [book, topic, siman, seif].filter(x => x != null).join('/');
 }
+
+export const HOME = 'home';
+export const isHome = loc => !loc.book || loc.book === HOME;
+
+// One bookmark per device, kept in the browser:
+// { book, topic, siman, seif, label }
+const BOOKMARK_KEY = 'sifrei-halacha:bookmark';
+
+export function loadBookmark() {
+  try {
+    const bm = JSON.parse(localStorage.getItem(BOOKMARK_KEY));
+    return bm?.book && bm.topic && bm.siman ? bm : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveBookmark(bm) {
+  try {
+    if (bm) localStorage.setItem(BOOKMARK_KEY, JSON.stringify(bm));
+    else localStorage.removeItem(BOOKMARK_KEY);
+  } catch {
+    // storage blocked (private mode): the bookmark lasts until the page closes
+  }
+}
+
+// Opening the site with no address goes to the bookmark, if there is one
+export function startLocation() {
+  const bm = !location.hash && loadBookmark();
+  if (bm) history.replaceState(null, '', href(bm));
+  return readLocation();
+}
