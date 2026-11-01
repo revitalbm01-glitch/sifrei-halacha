@@ -1,166 +1,241 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useBook } from './useBook.js';
-import { hebrewNumber, spellingRegex, stripNiqqud } from './hebrew.js';
-
-const MAX_TEXT_HITS = 40;
-
-// Selection lives in the URL hash: #72 or #72:3 (siman:seif), or #chat
-function readHash() {
-  if (location.hash === '#chat') return { chat: true, siman: null, seif: null };
-  const [siman, seif] = location.hash.slice(1).split(':').map(Number);
-  return { chat: false, siman: siman || null, seif: seif || null };
-}
+import { href, readLocation, useJson } from './data.js';
+import { spellingRegex } from './hebrew.js';
 
 export default function App() {
-  const { book, isSample, error } = useBook();
-  const [selected, setSelected] = useState(readHash);
-  const [query, setQuery] = useState('');
-  const [menuOpen, setMenuOpen] = useState(() => !readHash().siman && !readHash().chat);
-  const [lastSiman, setLastSiman] = useState(null);
+  const [loc, setLoc] = useState(readLocation);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (selected.siman) setLastSiman(selected.siman);
-  }, [selected.siman]);
-
-  useEffect(() => {
-    const onHash = () => { setSelected(readHash()); setMenuOpen(false); };
+    const onHash = () => { setLoc(readLocation()); setMenuOpen(false); };
     addEventListener('hashchange', onHash);
     return () => removeEventListener('hashchange', onHash);
   }, []);
 
-  // Plain-text copy of every seif for searching without niqqud
-  const searchIndex = useMemo(() => book?.simanim.map(s => ({
-    number: s.number,
-    title: stripNiqqud(s.title),
-    seifim: s.seifim.map(stripNiqqud),
-  })) ?? [], [book]);
+  const books = useJson('books.json');
+  const book = books.data?.find(b => b.id === loc.book) ?? books.data?.[0];
+  const index = useJson(book ? `${book.id}/index.json` : null);
+  const topicFile = useJson(book && loc.topic ? `${book.id}/topics/${loc.topic}.json` : null);
 
-  const q = query.trim();
-  const re = useMemo(() => spellingRegex(q), [q]);
-  const titleHits = re ? searchIndex.filter(s => re.test(s.title)).map(s => s.number) : null;
-  const textHits = useMemo(() => {
-    if (!re || stripNiqqud(q).length < 2) return [];
-    const hits = [];
-    for (const s of searchIndex) {
-      s.seifim.forEach((text, i) => {
-        if (hits.length >= MAX_TEXT_HITS) return;
-        const m = re.exec(text);
-        if (m) hits.push({ siman: s.number, seif: i + 1, snippet: snippet(text, m.index, m[0].length) });
-      });
-    }
-    return hits;
-  }, [q, re, searchIndex]);
-
-  const siman = book?.simanim.find(s => s.number === selected.siman);
+  const topics = useMemo(() => index.data?.parts.flatMap(p => p.topics) ?? [], [index.data]);
+  const topic = topics.find(t => t.n === loc.topic);
+  const siman = loc.siman ? topicFile.data?.simanim[loc.siman - 1] : null;
 
   useEffect(() => {
-    if (selected.chat) return;
-    if (selected.seif) document.getElementById(`seif-${selected.seif}`)?.scrollIntoView({ block: 'center' });
+    if (loc.seif) document.getElementById(`seif-${loc.seif}`)?.scrollIntoView({ block: 'center' });
     else window.scrollTo(0, 0);
-  }, [selected, siman]);
+  }, [loc, siman]);
 
-  const go = (simanNum, seif) => {
-    location.hash = seif ? `${simanNum}:${seif}` : `${simanNum}`;
-    setMenuOpen(false);
-  };
+  if (books.error) return <div className="status">לא ניתן לטעון את רשימת הספרים</div>;
+  if (!book) return <div className="status">טוען…</div>;
 
-  if (error) return <div className="status">{error}</div>;
-  if (!book) return <div className="status">טוען את הספר…</div>;
-
-  const listed = titleHits ? book.simanim.filter(s => titleHits.includes(s.number)) : book.simanim;
+  const at = rest => href({ book: book.id, ...rest });
 
   return (
-    <div className={`layout ${selected.chat ? 'chat-mode' : ''}`}>
+    <div className="layout">
       <header className="topbar">
-        {!selected.chat && (
-          <button className="menu-btn" onClick={() => setMenuOpen(o => !o)} aria-expanded={menuOpen}>
-            {menuOpen ? 'סגור' : 'נושאים'}
-          </button>
-        )}
-        <h1>{book.title}</h1>
-        {isSample && <span className="badge">נתוני דוגמה</span>}
+        <button className="menu-btn" onClick={() => setMenuOpen(o => !o)} aria-expanded={menuOpen}>
+          {menuOpen ? 'סגור' : 'נושאים'}
+        </button>
+        <a className="brand" href={at({})}>ספרי הלכה</a>
+        <nav className="book-tabs" aria-label="ספר">
+          {books.data.map(b => (
+            <a key={b.id} href={href({ book: b.id })} className={b.id === book.id ? 'active' : ''}>
+              {shortTitle(b)}
+            </a>
+          ))}
+        </nav>
       </header>
 
       <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
-        <input
-          className="search"
-          type="search"
-          placeholder="חיפוש נושא או מילה…"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-        />
-        <nav aria-label="סימנים">
-          {listed.length === 0 && <p className="muted">אין נושא בשם הזה</p>}
-          <ul className="toc">
-            {listed.map(s => (
-              <li key={s.number}>
-                <button
-                  className={s.number === selected.siman ? 'active' : ''}
-                  onClick={() => go(s.number)}
-                >
-                  <span className="num">{hebrewNumber(s.number)}</span>
-                  <span>{s.title}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        {textHits.length > 0 && (
-          <section className="hits">
-            <h2>נמצא בתוך ההלכות{textHits.length >= MAX_TEXT_HITS ? ` (${MAX_TEXT_HITS} ראשונים)` : ''}</h2>
-            <ul>
-              {textHits.map(h => (
-                <li key={`${h.siman}:${h.seif}`}>
-                  <button onClick={() => go(h.siman, h.seif)}>
-                    <span className="ref">סימן {hebrewNumber(h.siman)} סעיף {hebrewNumber(h.seif)}</span>
-                    <span className="snippet">{h.snippet}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        {index.data && <Toc book={book} index={index.data} loc={loc} at={at} />}
       </aside>
 
       <main className="content">
-        {siman ? (
-          <article>
-            <p className="kicker">סימן {hebrewNumber(siman.number)}</p>
-            <h2 className="siman-title">{siman.title}</h2>
-            <ol className="seifim">
-              {siman.seifim.map((text, i) => (
-                <li key={i} id={`seif-${i + 1}`} className={selected.seif === i + 1 ? 'highlight' : ''}>
-                  <span className="seif-num">{hebrewNumber(i + 1)}</span>
-                  <p>{text}</p>
-                </li>
-              ))}
-            </ol>
-            <nav className="pager">
-              {book.simanim.some(s => s.number === siman.number - 1) && (
-                <button onClick={() => go(siman.number - 1)}>→ הסימן הקודם</button>
-              )}
-              {book.simanim.some(s => s.number === siman.number + 1) && (
-                <button onClick={() => go(siman.number + 1)}>הסימן הבא ←</button>
-              )}
-            </nav>
-          </article>
+        <Breadcrumbs book={book} topic={topic} siman={siman} loc={loc} at={at} />
+        {index.error || topicFile.error ? (
+          <p className="status">שגיאה בטעינת הספר. נסו לרענן את הדף.</p>
+        ) : !loc.topic ? (
+          index.data && <BookHome book={book} index={index.data} at={at} />
+        ) : !topicFile.data ? (
+          <p className="status">טוען…</p>
+        ) : !siman ? (
+          <TopicView topic={topicFile.data} n={loc.topic} at={at} />
         ) : (
-          <div className="empty">
-            <h2>בחרו נושא</h2>
-            <p>{book.simanim.length} סימנים. אפשר לבחור מהרשימה או לחפש מילה בתוך ההלכות.</p>
-          </div>
+          <SimanView topicData={topicFile.data} siman={siman} loc={loc} at={at} topics={topics} />
         )}
-        <footer className="source">
-          מקור: <a href={book.source.url} target="_blank" rel="noreferrer">{book.source.name}</a>,
-          {' '}{book.source.version} ({book.source.license})
-        </footer>
+        <SourceNote book={book} />
       </main>
     </div>
   );
 }
 
-function snippet(text, at, len) {
-  const start = Math.max(0, at - 30);
-  const end = Math.min(text.length, at + len + 50);
-  return (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
+const shortTitle = b => (b.id === 'yalkut-yosef' ? 'ילקוט יוסף' : b.title);
+const simanName = s => (s.label ? `סימן ${s.label}` : 'פתיחה');
+
+function Toc({ book, index, loc, at }) {
+  const [query, setQuery] = useState('');
+  const re = spellingRegex(query.trim());
+  const matches = re ? index.parts.flatMap(p => p.topics).flatMap(t => [
+    ...(re.test(t.title) ? [{ key: `t${t.n}`, link: at({ topic: t.n }), main: t.title, sub: 'נושא' }] : []),
+    ...t.simanim.flatMap((s, i) => re.test(s.title)
+      ? [{ key: `s${t.n}-${i}`, link: at({ topic: t.n, siman: i + 1 }), main: s.title, sub: `${t.title} · ${simanName(s)}` }]
+      : []),
+  ]) : null;
+
+  return (
+    <>
+      <input
+        className="search"
+        type="search"
+        placeholder={`חיפוש נושא או סימן ב${shortTitle(book)}…`}
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+      />
+      {matches ? (
+        <ul className="results">
+          {matches.length === 0 && <li className="muted">לא נמצא נושא או סימן בשם הזה</li>}
+          {matches.slice(0, 80).map(m => (
+            <li key={m.key}>
+              <a href={m.link}><span>{m.main}</span><small>{m.sub}</small></a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        index.parts.map(part => (
+          <section key={part.title || 'all'} className="toc-part">
+            {part.title && <h2>{part.title}</h2>}
+            <ul className="toc">
+              {part.topics.map(t => (
+                <li key={t.n}>
+                  <a href={at({ topic: t.n })} className={t.n === loc.topic ? 'active' : ''}>{t.title}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      )}
+    </>
+  );
+}
+
+function Breadcrumbs({ book, topic, siman, loc, at }) {
+  return (
+    <nav className="crumbs" aria-label="מיקום">
+      <a href={at({})}>{book.title}</a>
+      {topic && <><span aria-hidden>‹</span><a href={at({ topic: topic.n })}>{topic.title}</a></>}
+      {siman && <><span aria-hidden>‹</span><a href={at({ topic: loc.topic, siman: loc.siman })}>{simanName(siman)}</a></>}
+    </nav>
+  );
+}
+
+function BookHome({ book, index, at }) {
+  return (
+    <section>
+      <h1 className="page-title">{book.title}</h1>
+      {book.author && <p className="muted">{book.author}</p>}
+      {index.parts.map(part => (
+        <div key={part.title || 'all'} className="home-part">
+          {part.title && <h2>{part.title}</h2>}
+          <div className="topic-grid">
+            {part.topics.map(t => (
+              <a key={t.n} href={at({ topic: t.n })} className="topic-card">
+                <span>{t.title}</span>
+                <small>{t.simanim.length} סימנים</small>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function TopicView({ topic, n, at }) {
+  return (
+    <section>
+      <h1 className="page-title">{topic.title}</h1>
+      <ol className="siman-list">
+        {topic.simanim.map((s, i) => (
+          <li key={i}>
+            <a href={at({ topic: n, siman: i + 1 })}>
+              <span className="num">{s.label || '•'}</span>
+              <span>{s.title}</span>
+              <small>{s.seifim.length} סעיפים</small>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function SimanView({ topicData, siman, loc, at, topics }) {
+  const prev = loc.siman > 1
+    ? { topic: loc.topic, siman: loc.siman - 1 }
+    : neighbourTopic(topics, loc.topic, -1);
+  const next = loc.siman < topicData.simanim.length
+    ? { topic: loc.topic, siman: loc.siman + 1 }
+    : neighbourTopic(topics, loc.topic, +1);
+
+  return (
+    <article>
+      <p className="kicker">{topicData.title} · {simanName(siman)}</p>
+      <h1 className="page-title">{siman.title}</h1>
+
+      {siman.seifim.length > 1 && (
+        <nav className="seif-picker" aria-label="סעיפים">
+          {siman.seifim.map((s, i) => (
+            <a
+              key={i}
+              href={at({ topic: loc.topic, siman: loc.siman, seif: i + 1 })}
+              className={loc.seif === i + 1 ? 'active' : ''}
+            >
+              {s.label || '•'}
+            </a>
+          ))}
+        </nav>
+      )}
+
+      <ol className="seifim">
+        {siman.seifim.map((s, i) => (
+          <li key={i} id={`seif-${i + 1}`} className={loc.seif === i + 1 ? 'highlight' : ''}>
+            <a className="seif-num" href={at({ topic: loc.topic, siman: loc.siman, seif: i + 1 })}>{s.label}</a>
+            <p>{renderSeif(s.text)}</p>
+          </li>
+        ))}
+      </ol>
+
+      <nav className="pager">
+        {prev ? <a href={at(prev)}>→ הקודם</a> : <span />}
+        {next ? <a href={at(next)}>הבא ←</a> : <span />}
+      </nav>
+    </article>
+  );
+}
+
+// First siman of the next topic, or last siman of the previous one
+function neighbourTopic(topics, n, dir) {
+  const t = topics[topics.findIndex(x => x.n === n) + dir];
+  if (!t) return null;
+  return { topic: t.n, siman: dir > 0 ? 1 : t.simanim.length };
+}
+
+// Source references in [brackets] are shown in small type
+function renderSeif(text) {
+  return text.split(/(\[[^\]]*\])/g).map((part, i) =>
+    part.startsWith('[') ? <span key={i} className="ref">{part}</span> : part);
+}
+
+function SourceNote({ book }) {
+  const { source } = book;
+  return (
+    <footer className="source">
+      {source.rights && <p>{source.rights}.</p>}
+      <p>
+        מקור: <a href={source.url} target="_blank" rel="noreferrer">{source.name}</a>
+        {' '}· {source.license === 'Public Domain' ? 'נחלת הכלל' : `רישיון ${source.license}, לשימוש לא מסחרי בלבד`}
+      </p>
+    </footer>
+  );
 }
