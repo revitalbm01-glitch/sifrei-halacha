@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useBook } from './useBook.js';
 import { hebrewNumber, spellingRegex, stripNiqqud } from './hebrew.js';
-import Chat from './Chat.jsx';
 
 const MAX_TEXT_HITS = 40;
 
@@ -17,8 +16,6 @@ export default function App() {
   const [selected, setSelected] = useState(readHash);
   const [query, setQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(() => !readHash().siman && !readHash().chat);
-  // Kept here so the conversation survives jumping to a cited seif and back
-  const [chatMessages, setChatMessages] = useState([]);
   const [lastSiman, setLastSiman] = useState(null);
 
   useEffect(() => {
@@ -82,10 +79,6 @@ export default function App() {
         )}
         <h1>{book.title}</h1>
         {isSample && <span className="badge">נתוני דוגמה</span>}
-        <nav className="tabs" aria-label="תצוגה">
-          <a href={lastSiman ? `#${lastSiman}` : '#'} className={selected.chat ? '' : 'active'}>ספר</a>
-          <a href="#chat" className={selected.chat ? 'active' : ''}>שאלו את הספר</a>
-        </nav>
       </header>
 
       <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
@@ -130,9 +123,7 @@ export default function App() {
       </aside>
 
       <main className="content">
-        {selected.chat ? (
-          <Chat messages={chatMessages} setMessages={setChatMessages} />
-        ) : siman ? (
+        {siman ? (
           <article>
             <p className="kicker">סימן {hebrewNumber(siman.number)}</p>
             <h2 className="siman-title">{siman.title}</h2>

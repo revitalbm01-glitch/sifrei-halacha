@@ -1,0 +1,13 @@
+[
+  {
+    "id": "sample",
+    "title": "ספר לדוגמה",
+    "author": "",
+    "source": {
+      "name": "Sefaria",
+      "version": "Torat Emet 357",
+      "license": "Public Domain",
+      "url": "https://www.sefaria.org/Kitzur_Shulchan_Arukh"
+    }
+  }
+]
