@@ -3,6 +3,10 @@
 אפליקציה חינמית לקריאה בספרי הלכה: בוחרים ספר, נושא, סימן וסעיף.
 רצה כולה בדפדפן, בלי שרת ובלי שירות בתשלום.
 
+**לאתר: https://revitalbm01-glitch.github.io/sifrei-halacha/**
+
+אפיון מלא: [docs/SPEC.md](docs/SPEC.md) · מבנה הנתונים: [docs/schema.md](docs/schema.md)
+
 ## הספרים
 | ספר | מקור | רישיון |
 |---|---|---|
@@ -28,3 +32,10 @@ npm run dev
 ```bash
 npm run fetch-books
 ```
+
+## פרסום
+כל דחיפה ל-`main` בונה את האתר ומפרסמת אותו ב-GitHub Pages ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)).
+
+## רישיון
+הקוד ברישיון MIT. טקסט הספרים תחת `public/data/` אינו חלק מרישיון זה ונשאר בתנאי המקור:
+ילקוט יוסף — CC BY-NC-SA 2.5 (לשימוש לא מסחרי בלבד, בציון המקור), קיצור שולחן ערוך — Public Domain. פרטים ב-[LICENSE](LICENSE).

@@ -5,7 +5,7 @@ const cache = new Map();
 
 function loadJson(path) {
   if (!cache.has(path)) {
-    cache.set(path, fetch(`/data/${path}`).then(res => {
+    cache.set(path, fetch(`${import.meta.env.BASE_URL}data/${path}`).then(res => {
       if (!res.ok) throw new Error(`${path}: HTTP ${res.status}`);
       return res.json();
     }).catch(err => {
