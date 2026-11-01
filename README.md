@@ -1,24 +1,30 @@
-# הלכות — קיצור שולחן ערוך
+# ספרי הלכה — לפי נושא, סימן וסעיף
 
-שלב 1: אפליקציה לבחירת נושא וקריאת ההלכות. שלב 2 (בהמשך): צ'אט שעונה על שאלות מתוך הספר.
+אפליקציה חינמית לקריאה בספרי הלכה: בוחרים ספר, נושא, סימן וסעיף.
+רצה כולה בדפדפן, בלי שרת ובלי שירות בתשלום.
+
+## הספרים
+| ספר | מקור | רישיון |
+|---|---|---|
+| קיצור שולחן ערוך ילקוט יוסף, הרב יצחק יוסף (מהדורת תשס"ז) | [תורת אמת](https://toratemetfreeware.com/online/f_01355_all.html) | כל הזכויות שמורות למו"ר הרב יצחק יוסף שליט"א. מופץ בחינם לזיכוי הרבים, CC BY-NC-SA 2.5: לא לשימוש מסחרי, ובציון המקור |
+| קיצור שולחן ערוך, רבי שלמה גאנצפריד | [Sefaria](https://www.sefaria.org/Kitzur_Shulchan_Arukh) (Torat Emet 357) | Public Domain |
+
+החלוקה של קיצור שולחן ערוך לנושאים היא שלנו ([scripts/kitzur-topics.mjs](scripts/kitzur-topics.mjs)).
 
 ## ענפים
-- `feature/content` — משיכת הספר מספריא ובניית `public/data/kitzur.json` (`scripts/`).
+- `feature/content` — בניית קבצי הספרים תחת `public/data/` (`scripts/`).
 - `feature/ui` — מסך המשתמש (React + Vite, `src/`).
 
 המבנה המשותף מתואר ב-[docs/schema.md](docs/schema.md).
-
-- `feature/chat-server` — שרת הצ'אט (`server/`): בוחר את הסימנים הרלוונטיים ועונה מתוכם בעזרת Claude. ממשק: [docs/chat-api.md](docs/chat-api.md).
-- `feature/chat-ui` — מסך הצ'אט.
+הצ'אט נשמר בענפים `feature/chat-server` ו-`feature/chat-ui`, ואינו חלק מהאפליקציה כרגע.
 
 ## הרצה
 ```bash
-node scripts/fetch-sefaria.mjs   # בניית קובץ הספר
 npm install
 npm run dev
 ```
 
-הצ'אט צריך מפתח API של Anthropic: מעתיקים את `.env.example` ל-`.env`, ממלאים את `ANTHROPIC_API_KEY`, ומריצים בחלון נפרד:
+בנייה מחדש של שני הספרים מהמקורות (לא חובה, הקבצים כבר בפרויקט):
 ```bash
-npm run server
+npm run fetch-books
 ```
