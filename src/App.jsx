@@ -1,20 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useBook } from './useBook.js';
 import { hebrewNumber, spellingRegex, stripNiqqud } from './hebrew.js';
+import Chat from './Chat.jsx';
 
 const MAX_TEXT_HITS = 40;
 
-// Selection lives in the URL hash: #72 or #72:3 (siman:seif)
+// Selection lives in the URL hash: #72 or #72:3 (siman:seif), or #chat
 function readHash() {
+  if (location.hash === '#chat') return { chat: true, siman: null, seif: null };
   const [siman, seif] = location.hash.slice(1).split(':').map(Number);
-  return { siman: siman || null, seif: seif || null };
+  return { chat: false, siman: siman || null, seif: seif || null };
 }
 
 export default function App() {
   const { book, isSample, error } = useBook();
   const [selected, setSelected] = useState(readHash);
   const [query, setQuery] = useState('');
-  const [menuOpen, setMenuOpen] = useState(!readHash().siman);
+  const [menuOpen, setMenuOpen] = useState(() => !readHash().siman && !readHash().chat);
+  // Kept here so the conversation survives jumping to a cited seif and back
+  const [chatMessages, setChatMessages] = useState([]);
+  const [lastSiman, setLastSiman] = useState(null);
+
+  useEffect(() => {
+    if (selected.siman) setLastSiman(selected.siman);
+  }, [selected.siman]);
 
   useEffect(() => {
     const onHash = () => { setSelected(readHash()); setMenuOpen(false); };
@@ -48,6 +57,7 @@ export default function App() {
   const siman = book?.simanim.find(s => s.number === selected.siman);
 
   useEffect(() => {
+    if (selected.chat) return;
     if (selected.seif) document.getElementById(`seif-${selected.seif}`)?.scrollIntoView({ block: 'center' });
     else window.scrollTo(0, 0);
   }, [selected, siman]);
@@ -63,13 +73,19 @@ export default function App() {
   const listed = titleHits ? book.simanim.filter(s => titleHits.includes(s.number)) : book.simanim;
 
   return (
-    <div className="layout">
+    <div className={`layout ${selected.chat ? 'chat-mode' : ''}`}>
       <header className="topbar">
-        <button className="menu-btn" onClick={() => setMenuOpen(o => !o)} aria-expanded={menuOpen}>
-          {menuOpen ? 'סגור' : 'נושאים'}
-        </button>
+        {!selected.chat && (
+          <button className="menu-btn" onClick={() => setMenuOpen(o => !o)} aria-expanded={menuOpen}>
+            {menuOpen ? 'סגור' : 'נושאים'}
+          </button>
+        )}
         <h1>{book.title}</h1>
         {isSample && <span className="badge">נתוני דוגמה</span>}
+        <nav className="tabs" aria-label="תצוגה">
+          <a href={lastSiman ? `#${lastSiman}` : '#'} className={selected.chat ? '' : 'active'}>ספר</a>
+          <a href="#chat" className={selected.chat ? 'active' : ''}>שאלו את הספר</a>
+        </nav>
       </header>
 
       <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
@@ -114,7 +130,9 @@ export default function App() {
       </aside>
 
       <main className="content">
-        {siman ? (
+        {selected.chat ? (
+          <Chat messages={chatMessages} setMessages={setChatMessages} />
+        ) : siman ? (
           <article>
             <p className="kicker">סימן {hebrewNumber(siman.number)}</p>
             <h2 className="siman-title">{siman.title}</h2>
