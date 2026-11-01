@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "fetch-book": "node scripts/fetch-sefaria.mjs"
+    "fetch-books": "node scripts/fetch-torat-emet.mjs && node scripts/fetch-sefaria.mjs"
   },
   "dependencies": {
     "react": "18.3.1",
