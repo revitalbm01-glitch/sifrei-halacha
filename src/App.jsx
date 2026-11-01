@@ -71,7 +71,8 @@ export default function App() {
 }
 
 const shortTitle = b => (b.id === 'yalkut-yosef' ? 'ילקוט יוסף' : b.title);
-const simanName = s => (s.label ? `סימן ${s.label}` : 'פתיחה');
+// Unnumbered subheadings (and topic intros) are named by their title
+const simanName = s => (s.label ? `סימן ${s.label}` : s.title);
 
 function Toc({ book, index, loc, at }) {
   const [query, setQuery] = useState('');

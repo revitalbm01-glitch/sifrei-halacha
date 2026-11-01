@@ -115,7 +115,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .siman-list { list-style: none; margin: 0; padding: 0; }
 .siman-list a {
-  display: grid; grid-template-columns: 3rem 1fr auto; gap: .75rem; align-items: baseline;
+  display: grid; grid-template-columns: minmax(3rem, max-content) 1fr auto; gap: .75rem; align-items: baseline;
   padding: .7rem .5rem; border-bottom: 1px solid var(--border); text-decoration: none;
 }
 .siman-list a:hover { background: var(--accent-soft); }
@@ -168,6 +168,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .content { padding: 1rem; }
   .page-title { font-size: 1.6rem; }
   .seifim p { font-size: 1.1rem; }
-  .siman-list a { grid-template-columns: 2.5rem 1fr; }
+  .siman-list a { grid-template-columns: minmax(2.5rem, max-content) 1fr; }
   .siman-list small { display: none; }
 }
