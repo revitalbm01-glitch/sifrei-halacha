@@ -49,6 +49,7 @@
 | [#9](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/9) | כללי תשובה ואחריות הלכתית | החלטה |
 | [#10](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/10) | ✅ חיפוש חכם בלי AI: מילון מושגים, חיפוש בטקסט, הערכה (90% במקום 0%) | קוד |
 | [#11](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/11) | תיעוד הצ'אט | תיעוד |
+| [#13](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/13) | תשובה מסודרת עם השוואה בין שני הספרים: השוואה חינמית בשני טורים, ו/או תשובה מנוסחת עם Claude (ממתין להחלטה) | קוד |
 
 **סדר מומלץ:** #1 ו-#9 (החלטות) במקביל ל-#2 ← #3 ← #4 ← #5, עם #6 לבדיקת כל שלב. אחר כך #7 ו-#8 לפני פתיחה לציבור.
 #10 הושלם: הוא שכבת החיפוש שהצ'אט ישתמש בה. שאלות ההבהרה ("השניצל יבש או עם רוטב?") שייכות לשלב עם Claude.
