@@ -1,0 +1,23 @@
+[
+  { "q": "האם אפשר לחמם שניצל בשבת?", "expect": ["yalkut-yosef/23/109/2"], "note": "ילקו\"י שבת, סימן שיח סעיף נח: יבש מול רוטב" },
+  { "q": "מה מברכים על בננה?", "expect": ["yalkut-yosef/16/1/4", "yalkut-yosef/16/1/5", "yalkut-yosef/16/2/3"] },
+  { "q": "כמה זמן צריך לחכות אחרי בשר כדי לאכול חלבי?", "expect": ["yalkut-yosef/41/11/*", "kitzur-shulchan-arukh/7/5/*"] },
+  { "q": "אכלתי גבינה, מתי מותר לי לאכול בשר?", "expect": ["yalkut-yosef/41/12/*"] },
+  { "q": "שכחתי לומר יעלה ויבוא בשחרית של ראש חודש, מה עושים?", "expect": ["yalkut-yosef/7/27/*", "kitzur-shulchan-arukh/3/8/*"] },
+  { "q": "מה מברכים על פיצה?", "expect": ["yalkut-yosef/12/3/3"] },
+  { "q": "איך מכינים תה בשבת?", "expect": ["yalkut-yosef/23/104/*"] },
+  { "q": "מי צריך להדליק נרות שבת?", "expect": ["yalkut-yosef/23/17/*"] },
+  { "q": "מתי מדליקים נרות חנוכה?", "expect": ["yalkut-yosef/33/4/*", "kitzur-shulchan-arukh/19/1/*"] },
+  { "q": "מה הברכה על אורז?", "expect": ["yalkut-yosef/16/1/6", "yalkut-yosef/16/7/10"] },
+  { "q": "האם מתענים ביום השנה של אבא?", "expect": ["yalkut-yosef/66/37/*", "kitzur-shulchan-arukh/29/28/*"] },
+  { "q": "מה מברכים כשרואים ברק?", "expect": ["yalkut-yosef/20/5/*", "kitzur-shulchan-arukh/9/13/*"] },
+  { "q": "מברכים שהחיינו על בגד חדש?", "expect": ["yalkut-yosef/20/2/*", "kitzur-shulchan-arukh/9/12/*"] },
+  { "q": "מותר לאכול לפני תפילת שחרית?", "expect": ["yalkut-yosef/7/5/*", "kitzur-shulchan-arukh/1/8/*"] },
+  { "q": "איך עושים עירוב תבשילין?", "expect": ["yalkut-yosef/26/22/*", "kitzur-shulchan-arukh/14/5/*"] },
+  { "q": "יורד גשם, צריך לשבת בסוכה?", "expect": ["yalkut-yosef/31/16/21", "kitzur-shulchan-arukh/18/2/*"] },
+  { "q": "צריך לטבול כלים חדשים שקניתי?", "expect": ["yalkut-yosef/44/1/*", "kitzur-shulchan-arukh/7/3/*"] },
+  { "q": "מותר לגלח את הזקן?", "expect": ["yalkut-yosef/50/1/*", "kitzur-shulchan-arukh/24/5/*"] },
+  { "q": "מותר לקחת ריבית מחבר על הלוואה?", "expect": ["yalkut-yosef/47/1/*", "yalkut-yosef/47/2/*", "kitzur-shulchan-arukh/10/4/*"] },
+  { "q": "לא זוכר אם בירכתי ברכת המזון, מה עושים?", "expect": ["kitzur-shulchan-arukh/8/6/*", "yalkut-yosef/15/*/*"] },
+  { "q": "איך קובעים מזוזה בדלת?", "expect": ["yalkut-yosef/58/3/*", "kitzur-shulchan-arukh/2/3/*"] }
+]

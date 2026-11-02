@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "fetch-books": "node scripts/fetch-torat-emet.mjs && node scripts/fetch-sefaria.mjs",
+    "fetch-books": "node scripts/fetch-torat-emet.mjs && node scripts/fetch-sefaria.mjs && node scripts/build-search-index.mjs",
     "test": "vitest run",
-    "eval": "node scripts/eval-data.mjs"
+    "eval": "node scripts/eval-data.mjs && node scripts/eval-search.mjs",
+    "build-search": "node scripts/build-search-index.mjs",
+    "eval:search": "node scripts/eval-search.mjs"
   },
   "dependencies": {
     "react": "18.3.1",

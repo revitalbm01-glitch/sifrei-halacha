@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 // Files under public/data/, as described in docs/schema.md
 const cache = new Map();
 
-function loadJson(path) {
+export function loadJson(path) {
   if (!cache.has(path)) {
     cache.set(path, fetch(`${import.meta.env.BASE_URL}data/${path}`).then(res => {
       if (!res.ok) throw new Error(`${path}: HTTP ${res.status}`);
@@ -34,9 +34,17 @@ export function useJson(path) {
   return state.path === path ? state : { path, data: null, error: null };
 }
 
-// Location lives in the hash: #<bookId>/<topic n>/<siman #>/<seif #>
+export const HOME = 'home';
+export const SEARCH = 'search';
+
+// Location lives in the hash: #<bookId>/<topic n>/<siman #>/<seif #>, #home, or
+// #search/<question> (the question may contain "/")
 export function readLocation() {
-  const [book, topic, siman, seif] = decodeURIComponent(location.hash.slice(1)).split('/');
+  const raw = decodeURIComponent(location.hash.slice(1));
+  if (raw === SEARCH || raw.startsWith(`${SEARCH}/`)) {
+    return { book: SEARCH, topic: null, siman: null, seif: null, query: raw.slice(SEARCH.length + 1) };
+  }
+  const [book, topic, siman, seif] = raw.split('/');
   const num = s => (Number(s) > 0 ? Number(s) : null);
   return { book: book || null, topic: num(topic), siman: num(siman), seif: num(seif) };
 }
@@ -45,8 +53,12 @@ export function href({ book, topic, siman, seif }) {
   return '#' + [book, topic, siman, seif].filter(x => x != null).join('/');
 }
 
-export const HOME = 'home';
+export const searchHref = query => `#${SEARCH}/${encodeURIComponent(query.trim())}`;
+
 export const isHome = loc => !loc.book || loc.book === HOME;
+export const isSearch = loc => loc.book === SEARCH;
+
+export const shortTitle = book => (book.id === 'yalkut-yosef' ? 'ילקוט יוסף' : book.title);
 
 // One bookmark per device, kept in the browser:
 // { book, topic, siman, seif, label }

@@ -1,5 +1,5 @@
 import learningPhoto from './assets/learning.jpg';
-import { href } from './data.js';
+import { href, searchHref } from './data.js';
 
 // Quoted from the original texts on Sefaria, without niqqud
 const SOURCES = [
@@ -26,6 +26,18 @@ export default function Home({ books, bookmark }) {
         <div className="hero-text">
           <h1>ספרי הלכה</h1>
           <p>לימוד הלכה לפי נושא, סימן וסעיף — ילקוט יוסף וקיצור שולחן ערוך.</p>
+          <form
+            className="ask"
+            role="search"
+            onSubmit={e => {
+              e.preventDefault();
+              const q = new FormData(e.currentTarget).get('q');
+              if (q?.trim()) location.hash = searchHref(q);
+            }}
+          >
+            <input name="q" type="search" placeholder="שאלו שאלה, למשל: אפשר לחמם שניצל בשבת?" aria-label="שאלה" />
+            <button type="submit">חיפוש</button>
+          </form>
           {bookmark && (
             <a className="resume" href={href(bookmark)}>
               <BookmarkIcon filled />
