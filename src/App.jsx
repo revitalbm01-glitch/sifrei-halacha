@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  HOME, href, isHome, loadBookmark, readLocation, saveBookmark, startLocation, useJson,
+  HOME, SEARCH, href, isHome, isSearch, loadBookmark, readLocation, saveBookmark, shortTitle, startLocation, useJson,
 } from './data.js';
 import { spellingRegex } from './hebrew.js';
 import Home, { BookmarkIcon } from './Home.jsx';
+import SearchPage from './SearchPage.jsx';
 
 export default function App() {
   const [loc, setLoc] = useState(startLocation);
@@ -20,7 +21,8 @@ export default function App() {
 
   const books = useJson('books.json');
   const home = isHome(loc);
-  const book = home ? null : books.data?.find(b => b.id === loc.book) ?? books.data?.[0];
+  const searching = isSearch(loc);
+  const book = home || searching ? null : books.data?.find(b => b.id === loc.book) ?? books.data?.[0];
   const index = useJson(book ? `${book.id}/index.json` : null);
   const topicFile = useJson(book && loc.topic ? `${book.id}/topics/${loc.topic}.json` : null);
 
@@ -38,7 +40,7 @@ export default function App() {
 
   const topbar = (
     <header className="topbar">
-      {!home && (
+      {book && (
         <button className="menu-btn" onClick={() => setMenuOpen(o => !o)} aria-expanded={menuOpen}>
           {menuOpen ? 'סגור' : 'נושאים'}
         </button>
@@ -51,6 +53,9 @@ export default function App() {
           </a>
         ))}
       </nav>
+      <a className={`search-link ${searching ? 'active' : ''}`} href={`#${SEARCH}`} title="חיפוש בשאלה חופשית" aria-label="חיפוש">
+        <SearchIcon />
+      </a>
       {bookmark && !home && (
         <a className="bookmark-link" href={href(bookmark)} title={`לסימניה: ${bookmark.label}`} aria-label="לסימניה">
           <BookmarkIcon filled />
@@ -59,12 +64,14 @@ export default function App() {
     </header>
   );
 
-  if (home) {
+  if (home || searching) {
     return (
       <div className="layout home-mode">
         {topbar}
         <main className="content">
-          <Home books={books.data} bookmark={bookmark} />
+          {searching
+            ? <SearchPage books={books.data} query={loc.query} />
+            : <Home books={books.data} bookmark={bookmark} />}
         </main>
       </div>
     );
@@ -115,7 +122,6 @@ export default function App() {
   );
 }
 
-const shortTitle = b => (b.id === 'yalkut-yosef' ? 'ילקוט יוסף' : b.title);
 // Unnumbered subheadings (and topic intros) are named by their title
 const simanName = s => (s.label ? `סימן ${s.label}` : s.title);
 
@@ -292,5 +298,14 @@ function SourceNote({ book }) {
         {' '}· {source.license === 'Public Domain' ? 'נחלת הכלל' : `רישיון ${source.license}, לשימוש לא מסחרי בלבד`}
       </p>
     </footer>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
   );
 }

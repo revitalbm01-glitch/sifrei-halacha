@@ -1,0 +1,8 @@
+[
+  { "q": "מה מברכים על תפוח עץ?", "expect": ["yalkut-yosef/16/1/*", "kitzur-shulchan-arukh/9/5/*"] },
+  { "q": "מתי שותים ארבע כוסות בליל הסדר?", "expect": ["yalkut-yosef/25/38/*", "kitzur-shulchan-arukh/15/13/*"] },
+  { "q": "אפשר לאכול מצה בערב פסח?", "expect": ["yalkut-yosef/25/37/1", "yalkut-yosef/25/14/*", "kitzur-shulchan-arukh/15/7/5"] },
+  { "q": "מותר לסחוט פירות בשבת?", "expect": ["yalkut-yosef/23/121/*"] },
+  { "q": "מותר להתרחץ במים חמים בשבת?", "expect": ["yalkut-yosef/23/136/*", "kitzur-shulchan-arukh/12/15/*"] },
+  { "q": "מתי סופרים ספירת העומר?", "expect": ["yalkut-yosef/25/56/*", "kitzur-shulchan-arukh/15/14/*"] }
+]

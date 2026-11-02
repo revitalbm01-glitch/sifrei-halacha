@@ -93,6 +93,14 @@ for (const book of books) {
 
   if (largest > MAX_TOPIC_BYTES) fail(where, `largest topic file is ${largest} bytes (limit ${MAX_TOPIC_BYTES})`);
 
+  // The search index must be rebuilt whenever the book changes (npm run build-search)
+  try {
+    const { rows } = await readJson(`${book.id}/search.json`);
+    if (rows.length !== seifim) fail(`${book.id}/search.json`, `${rows.length} rows, but the book has ${seifim} seifim: run npm run build-search`);
+  } catch (err) {
+    fail(`${book.id}/search.json`, `cannot read (${err.message}): run npm run build-search`);
+  }
+
   if (expected) {
     const partTitles = index.parts.map(p => p.title);
     if (JSON.stringify(partTitles) !== JSON.stringify(expected.parts)) {
