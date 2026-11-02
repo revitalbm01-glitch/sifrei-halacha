@@ -5,7 +5,14 @@
 
 **לאתר: https://revitalbm01-glitch.github.io/sifrei-halacha/**
 
-אפיון מלא: [docs/SPEC.md](docs/SPEC.md) · מבנה הנתונים: [docs/schema.md](docs/schema.md)
+## מסמכים
+| מסמך | מה בו |
+|---|---|
+| [SPEC](docs/SPEC.md) | מה בונים ולמה: מטרה, משתמשים, דרישות |
+| [DESIGN](docs/DESIGN.md) | איך זה בנוי: ארכיטקטורה, עיצוב, החלטות |
+| [PLAN](docs/PLAN.md) | שלבים, מה הושלם, מה הבא בתור, סיכונים |
+| [MANAGEMENT](docs/MANAGEMENT.md) | ענפים, איך מכניסים שינוי, עדכון ספרים, פרסום |
+| [schema](docs/schema.md) | מבנה קבצי הספרים |
 
 ## הספרים
 | ספר | מקור | רישיון |
@@ -18,8 +25,9 @@
 ## ענפים
 - `feature/content` — בניית קבצי הספרים תחת `public/data/` (`scripts/`).
 - `feature/ui` — מסך המשתמש (React + Vite, `src/`).
+- `feature/quality` — תיעוד, טסטים והערכת נתונים.
 
-המבנה המשותף מתואר ב-[docs/schema.md](docs/schema.md).
+פירוט ב-[docs/MANAGEMENT.md](docs/MANAGEMENT.md).
 הצ'אט נשמר בענפים `feature/chat-server` ו-`feature/chat-ui`, ואינו חלק מהאפליקציה כרגע.
 
 ## הרצה
@@ -33,8 +41,14 @@ npm run dev
 npm run fetch-books
 ```
 
+## בדיקות
+```bash
+npm test       # טסטים: עברית, ניווט, סימניה, פירוק תורת אמת, נושאי קיצור שו"ע
+npm run eval   # הערכת נתוני הספרים: מבנה, ניקיון הטקסט, מספרים צפויים, דגימות ידועות
+```
+
 ## פרסום
-כל דחיפה ל-`main` בונה את האתר ומפרסמת אותו ב-GitHub Pages ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)).
+כל דחיפה ל-`main` מריצה טסטים והערכת נתונים, ורק אם הם עוברים בונה את האתר ומפרסמת אותו ב-GitHub Pages ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)).
 
 ## רישיון
 הקוד ברישיון MIT. טקסט הספרים תחת `public/data/` אינו חלק מרישיון זה ונשאר בתנאי המקור:
