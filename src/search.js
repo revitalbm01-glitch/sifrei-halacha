@@ -101,6 +101,8 @@ export function analyzeQuery(query, concepts = []) {
 
   for (const concept of concepts) {
     if (!concept.when.every(group => [].concat(group).some(has))) continue;
+    // "unless": words that show the question is about something else
+    if ((concept.unless ?? []).some(has)) continue;
     matchedConcepts.push(concept.name);
     for (const text of concept.add ?? []) {
       const term = makeTerm(text, concept.weight ?? 0.6, false);

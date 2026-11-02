@@ -38,6 +38,7 @@ export default function Home({ books, bookmark }) {
             <input name="q" type="search" placeholder="שאלו שאלה, למשל: אפשר לחמם שניצל בשבת?" aria-label="שאלה" />
             <button type="submit">חיפוש</button>
           </form>
+          <p className="ask-help"><a href="#search">על מה אפשר לשאול? ←</a></p>
           {bookmark && (
             <a className="resume" href={href(bookmark)}>
               <BookmarkIcon filled />

@@ -84,4 +84,23 @@ for (const set of SETS) {
     console.log(`${set.title}: ${pct(top5)} מוצאות מקור נכון ב-5 התוצאות הראשונות ✓`);
   }
 }
+// Questions shown to users as examples (src/search-subjects.json) must do better:
+// a correct source in the top 3
+const MAX_EXAMPLE_RANK = 3;
+const allQuestions = [...await readJson(SETS[0].file), ...await readJson(SETS[1].file)];
+const weakExamples = [];
+for (const { subject, examples } of await readJson('src/search-subjects.json')) {
+  for (const q of examples) {
+    const known = allQuestions.find(x => x.q === q);
+    const rank = known && rankOf(methods.concepts(q), known.expect);
+    if (!rank || rank > MAX_EXAMPLE_RANK) weakExamples.push(`${subject}: "${q}" (rank ${rank ?? 'none'})`);
+  }
+}
+if (weakExamples.length) {
+  console.error(`\nדוגמאות במסך שהמקור הנכון שלהן לא ב-${MAX_EXAMPLE_RANK} הראשונים:\n - ${weakExamples.join('\n - ')}`);
+  failed = true;
+} else {
+  console.log(`כל הדוגמאות במסך מוצאות מקור נכון ב-${MAX_EXAMPLE_RANK} התוצאות הראשונות ✓`);
+}
+
 if (failed) process.exit(1);
