@@ -28,15 +28,27 @@
 | 2.6 | כמה סימניות עם שמות | למי שלומד כמה נושאים במקביל | קטן |
 | 2.7 | עדכון Actions ל-Node 24 | אזהרת GitHub על Node 20 | קטן |
 
-## שלב 3 — שאלות ותשובות
+## שלב 3 — צ'אט
 
-| # | משימה | הערות |
+המשימות פתוחות ב-GitHub תחת [Milestone "שלב 3 — צ'אט"](https://github.com/revitalbm01-glitch/sifrei-halacha/milestone/1), עם התווית `chat`.
+קוד ראשוני קיים בענפי `feature/chat-server` ו-`feature/chat-ui`, אבל נכתב למבנה הנתונים הישן.
+
+| Issue | משימה | סוג |
 |---|---|---|
-| 3.1 | חיפוש חכם בלי AI | שאלה ← הסעיפים הרלוונטיים לפי מילים ומילים נרדפות. חינם, רץ בדפדפן |
-| 3.2 | צ'אט עם Claude | הקוד קיים בענפי `feature/chat-*`. בוחר סימנים מתוכן העניינים ועונה מהם עם הפניות. עולה כמה סנטים לשאלה ודורש מפתח API ושרת קטן |
-| 3.3 | הערכת איכות לצ'אט | סט שאלות עם תשובות ומקורות ידועים, ובדיקה שהצ'אט מצטט את הסעיף הנכון |
+| [#1](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/1) | מימון ואירוח (מפתח API, תקציב, איפה רץ השרת) | החלטה |
+| [#2](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/2) | התאמת שרת הצ'אט למבנה הנתונים החדש | קוד |
+| [#3](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/3) | בחירת מקורות בשני שלבים בילקוט יוסף | קוד |
+| [#4](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/4) | הפניות בתשובה לפי כתובת האפליקציה | קוד |
+| [#5](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/5) | מסך הצ'אט באפליקציה | קוד |
+| [#6](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/6) | סט הערכה לצ'אט | הערכה |
+| [#7](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/7) | פריסת השרת וניהול המפתח (תלוי ב-#1) | תשתית |
+| [#8](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/8) | בקרת עלויות ומניעת שימוש לרעה | תשתית |
+| [#9](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/9) | כללי תשובה ואחריות הלכתית | החלטה |
+| [#10](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/10) | חיפוש חכם בלי AI (חלופה חינמית) | קוד |
+| [#11](https://github.com/revitalbm01-glitch/sifrei-halacha/issues/11) | תיעוד הצ'אט | תיעוד |
 
-שלב 3.2 מתחיל רק אחרי החלטה על מימון (מפתח API) ואירוח.
+**סדר מומלץ:** #1 ו-#9 (החלטות) במקביל ל-#2 ← #3 ← #4 ← #5, עם #6 לבדיקת כל שלב. אחר כך #7 ו-#8 לפני פתיחה לציבור.
+#10 לא תלוי בשום דבר ואפשר להתחיל בו מיד, כי הוא חינמי.
 
 ## סיכונים
 
