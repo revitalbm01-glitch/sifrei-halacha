@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import concepts from './concepts.json';
 import { href, loadJson, searchHref, shortTitle } from './data.js';
 import { createIndex, search, snippet, splitWords, wordForms } from './search.js';
+import subjects from './search-subjects.json';
 
 const LIMIT = 20;
-const EXAMPLES = ['אפשר לחמם שניצל בשבת?', 'כמה זמן מחכים בין בשר לחלב?', 'מה מברכים על בננה?', 'איך מכינים תה בשבת?'];
 
 // Both books' search files are loaded once, the first time someone searches
 let indexPromise = null;
@@ -64,11 +64,7 @@ export default function SearchPage({ books, query }) {
         <button type="submit">חיפוש</button>
       </form>
 
-      {!query && (
-        <div className="examples">
-          {EXAMPLES.map(q => <a key={q} href={searchHref(q)}>{q}</a>)}
-        </div>
-      )}
+      {!query && <Subjects />}
 
       {query && (
         <div className="filters" role="group" aria-label="ספר">
@@ -111,9 +107,37 @@ export default function SearchPage({ books, query }) {
           <p className="disclaimer">
             אלה תוצאות חיפוש ולא פסק הלכה. קראו את הסעיף המלא, ובשאלה מעשית שאלו רב.
           </p>
+          <details className="subjects-more">
+            <summary>על מה אפשר לשאול?</summary>
+            <Subjects />
+          </details>
         </>
       )}
     </section>
+  );
+}
+
+// Subjects where everyday wording is understood, with questions known to work
+// (every example is checked by scripts/eval-search.mjs)
+function Subjects() {
+  return (
+    <div className="subjects">
+      <h2>על מה אפשר לשאול</h2>
+      <p className="muted">
+        החיפוש עובר על כל הסעיפים בשני הספרים. בנושאים האלה הוא מבין גם ניסוח יומיומי;
+        בנושאים אחרים כדאי להשתמש במילים מלשון הספר.
+      </p>
+      <ul>
+        {subjects.map(s => (
+          <li key={s.subject}>
+            <strong>{s.subject}</strong>
+            <div className="examples">
+              {s.examples.map(q => <a key={q} href={searchHref(q)}>{q}</a>)}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

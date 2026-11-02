@@ -38,6 +38,13 @@ describe('analyzeQuery', () => {
     expect(q.concepts).not.toContain('חשמל ואש בשבת');
   });
 
+  it('skips a concept when an "unless" word shows another subject', () => {
+    const q = analyzeQuery('מה מברכים כשרואים ברק?', concepts);
+    expect(q.concepts).toContain('ברכות הראייה');
+    expect(q.concepts).not.toContain('ברכות על אוכל');
+    expect(analyzeQuery('מה מברכים על בננה?', concepts).concepts).toContain('ברכות על אוכל');
+  });
+
   it('lets a question word trigger a concept without searching for it', () => {
     const q = analyzeQuery('מתי מדליקים נרות חנוכה?', concepts);
     expect(q.concepts).toContain('שאלת זמן');

@@ -242,12 +242,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
   padding: 0 1.2rem; border: 0; border-radius: 10px;
   background: var(--accent); color: var(--surface); font-weight: 500;
 }
-.search-page .examples { display: flex; flex-wrap: wrap; gap: .5rem; }
-.search-page .examples a {
-  padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 999px;
-  background: var(--surface); text-decoration: none; font-size: .9rem;
-}
-.search-page .examples a:hover { border-color: var(--accent); color: var(--accent); }
 .filters { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .75rem; }
 .filters button {
   padding: .3rem .8rem; border: 1px solid var(--border); border-radius: 999px;
@@ -269,3 +263,21 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .search-results .text { font-family: 'Frank Ruhl Libre', serif; font-size: 1.05rem; line-height: 1.75; }
 .search-results mark { background: var(--highlight); color: inherit; padding: 0 .1em; border-radius: 3px; }
 .disclaimer { margin-top: 1.25rem; font-size: .85rem; color: var(--muted); }
+
+/* Askable subjects */
+.subjects h2 { font-family: 'Frank Ruhl Libre', serif; font-size: 1.35rem; margin: 1.5rem 0 .35rem; }
+.subjects > p { margin: 0 0 1rem; font-size: .9rem; }
+.subjects ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.subjects li strong { display: block; margin-bottom: .35rem; color: var(--accent); }
+.subjects .examples { display: flex; flex-wrap: wrap; gap: .4rem; }
+.subjects .examples a {
+  padding: .4rem .8rem; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); text-decoration: none; font-size: .9rem;
+}
+.subjects .examples a:hover { border-color: var(--accent); color: var(--accent); }
+.subjects-more { margin-top: 1.5rem; }
+.subjects-more summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+.subjects-more .subjects h2 { display: none; }
+.ask-help { margin: -.5rem 0 1rem; font-size: .9rem; }
+.ask-help a { color: var(--accent); text-decoration: none; }
+.ask-help a:hover { text-decoration: underline; }
